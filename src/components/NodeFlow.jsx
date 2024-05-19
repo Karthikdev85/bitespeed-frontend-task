@@ -13,7 +13,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNodes } from "../context/NodesContext";
 import MessageNode from "./MessageNode";
 import CustomEdge from "./CustomEdge";
-// import {}
 
 const initialNodes = [
   {

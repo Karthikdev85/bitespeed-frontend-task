@@ -37,6 +37,11 @@ body {
   border: 2px solid #5fafca;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-save:active {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 8px;
 }
 
 .message-node {
@@ -56,10 +61,12 @@ body {
   justify-content: center;
   gap: 5px;
 }
-/* sssdsdsdsd-------------------------------------------------------------- */
-/* sssdsdsdsd-------------------------------------------------------------- */
-/* sssdsdsdsd-------------------------------------------------------------- */
-/* sssdsdsdsd-------------------------------------------------------------- */
+
+.message-node:hover {
+  outline: 1.6px solid #4f9eb9;
+}
+/*------------------------------------------------------------- */
+
 .dndflow {
   display: flex;
   flex-grow: 1;
@@ -82,7 +89,9 @@ body {
 }
 
 .text-node {
-  border: 1.7px solid rgb(156, 61, 61);
+  /* border: 1.7px solid #fff; */
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 8px;
+
   border-radius: 5px;
   /* display: flex; */
   justify-content: space-between;
@@ -96,8 +105,10 @@ body {
   justify-content: space-between;
   align-items: center;
   background-color: #a1f8ec;
-  border-radius: 5px;
-  padding: 1px 9px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  padding: 0.6px 9px;
+  font-weight: 600;
 }
 
 .text-node-header span {
@@ -173,4 +184,12 @@ body {
 
   border-radius: 7px;
   padding: 8px;
+}
+
+.react-flow__node.selected:focus {
+  outline: 1.6px solid rgb(66, 66, 233);
+}
+
+.react-flow__node {
+  border-radius: 8px;
 }

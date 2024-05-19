@@ -42,8 +42,8 @@ function MessageNode({ data, id }) {
             <svg
               fill="currentColor"
               viewBox="0 0 16 16"
-              height="0.5em"
-              width="0.5em"
+              height="0.6em"
+              width="0.6em"
               style={{ marginTop: 6 }}
             >
               <path d="M5 8a1 1 0 11-2 0 1 1 0 012 0zm4 0a1 1 0 11-2 0 1 1 0 012 0zm3 1a1 1 0 100-2 1 1 0 000 2z" />

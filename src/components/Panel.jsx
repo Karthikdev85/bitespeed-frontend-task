@@ -87,7 +87,6 @@ function SettingsPanel({ input, handleMessageInput, setShowSettingsPanel }) {
         <h2>Text</h2>
         <textarea
           className="message-input"
-          autoFocus={true}
           value={input}
           onChange={handleMessageInput}
         ></textarea>

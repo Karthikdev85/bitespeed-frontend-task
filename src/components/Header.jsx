@@ -34,7 +34,7 @@ export default function Header() {
   }
   return (
     <div className="header">
-      <ToastContainer />
+      <ToastContainer limit={3} />
       <button className="btn-save" onClick={handleFlowChanges}>
         Save changes
       </button>
