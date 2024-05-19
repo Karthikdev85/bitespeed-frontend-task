@@ -1,0 +1,176 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  height: 3rem;
+  background-color: #eaeeee;
+}
+
+.editor-panel {
+  display: flex;
+}
+
+.setting-panel {
+  width: 30vw;
+  background-color: antiquewhite;
+  border-left: 2px solid #eaeeee;
+  padding: 10px;
+  display: flex;
+}
+
+.btn-save {
+  float: right;
+  margin-right: 10%;
+  background-color: #fff;
+  color: #42849a;
+  margin-top: 5px;
+  padding: 0.5rem 1.5rem;
+  border: 2px solid #5fafca;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.message-node {
+  border: 2px solid grey;
+  width: 9rem;
+  height: 4rem;
+  text-align: center;
+  border-radius: 6px;
+  /* background-color: aliceblue; */
+  border: 1.4px solid #4f9eb9;
+  color: #4f9eb9;
+  font-size: 15px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+/* sssdsdsdsd-------------------------------------------------------------- */
+/* sssdsdsdsd-------------------------------------------------------------- */
+/* sssdsdsdsd-------------------------------------------------------------- */
+/* sssdsdsdsd-------------------------------------------------------------- */
+.dndflow {
+  display: flex;
+  flex-grow: 1;
+  height: calc(100vh - 3rem);
+}
+
+.dndflow aside {
+  border-left: 1px solid #eaeeee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #ffffff;
+  min-width: 20vw;
+  flex-grow: 1;
+  position: relative;
+}
+
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  height: calc(100vh - 3rem);
+}
+
+.text-node {
+  border: 1.7px solid rgb(156, 61, 61);
+  border-radius: 5px;
+  /* display: flex; */
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #fff;
+  width: 13rem;
+}
+
+.text-node-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #a1f8ec;
+  border-radius: 5px;
+  padding: 1px 9px;
+}
+
+.text-node-header span {
+  margin-left: 4px;
+  font-size: 11px;
+}
+.text-node-header:first-child svg {
+  margin-top: 5px;
+}
+
+.text-node-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 2.6rem;
+  border-radius: 5px;
+  padding: 1px 9px;
+  overflow: auto;
+  font-size: 14px;
+}
+/* .text-node:active {
+  border: 2px solid green;
+} */
+
+.edgebutton {
+  width: 14px;
+  height: 14px;
+  background: #eee;
+  border: 1px solid #fff;
+  cursor: pointer;
+  border-radius: 100%;
+  font-size: 8px;
+  line-height: 1;
+  text-align: left;
+  padding-left: 4px;
+  margin-left: 5px;
+}
+
+.edgebutton:hover {
+  box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.08);
+}
+
+.settings-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-left: 0.5px solid eaeeee;
+}
+.settings-panel-header {
+  padding: 10px;
+  border-bottom: 0.5px solid #cbcdcd;
+  display: flex;
+  align-items: center;
+  gap: 37%;
+}
+
+.message-cont {
+  padding: 10px;
+  border-bottom: 0.5px solid #eaeeee;
+}
+
+.message-cont h2 {
+  color: rgb(162, 162, 162);
+  margin-bottom: 4px;
+}
+
+.message-input {
+  width: 95% !important;
+  height: 80px !important;
+
+  border-radius: 7px;
+  padding: 8px;
+}
