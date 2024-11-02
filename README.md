@@ -11,6 +11,3 @@ Currently, two official plugins are available:
 ## Live link
 1. https://bitespeed-frontend-task-p7vr.onrender.com
 2. https://bitespeed-frontend-task-1.netlify.app/
-
-## Resume
-https://docs.google.com/document/d/1WX8CJNuZBmHIWWAdI53gExxpFtVT5COx/edit?usp=sharing&ouid=100583688774748661314&rtpof=true&sd=true
