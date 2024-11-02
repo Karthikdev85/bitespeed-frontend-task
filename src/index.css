@@ -1,195 +1,83 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
-body {
+* {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: sans-serif;
 }
 
-.header {
-  height: 3rem;
-  background-color: #eaeeee;
-}
-
-.editor-panel {
+.formulaTab {
   display: flex;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  gap: 0.8rem;
+  align-items: center;
+  border-bottom-width: 2px;
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+  height: 30px;
 }
 
-.setting-panel {
-  width: 30vw;
-  background-color: antiquewhite;
-  border-left: 2px solid #eaeeee;
-  padding: 10px;
-  display: flex;
-}
-
-.btn-save {
-  float: right;
-  margin-right: 10%;
-  background-color: #fff;
-  color: #42849a;
-  margin-top: 5px;
-  padding: 0.5rem 1.5rem;
-  border: 2px solid #5fafca;
+.inputCell {
   border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
+  /* border-width: 2px;
+  border-color: #d1d5db; */
+  outline-style: none;
+
+  height: 25px;
 }
 
-.btn-save:active {
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 8px;
-}
-
-.message-node {
-  border: 2px solid grey;
-  width: 9rem;
-  height: 4rem;
+.addressCell {
+  width: 5.6rem;
+  /* margin-right: 2px; */
   text-align: center;
-  border-radius: 6px;
-  /* background-color: aliceblue; */
-  border: 1.4px solid #4f9eb9;
-  color: #4f9eb9;
-  font-size: 15px;
-  cursor: grab;
+  border: 1px solid grey;
+  font-size: 12.5px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
 }
 
-.message-node:hover {
-  outline: 1.6px solid #4f9eb9;
+.formulaBar {
+  width: 20rem;
+  padding-left: 0.25rem;
+  /* flex-grow: 1; */
+  margin-left: -10px;
+  border: 1px solid grey;
 }
-/*------------------------------------------------------------- */
 
-.dndflow {
+.mergeCell {
+  /* padding: 4px; */
+
+  height: 25px;
+  /* aspect-ratio: 1; */
+  width: 25px;
   display: flex;
-  flex-grow: 1;
-  height: calc(100vh - 3rem);
-}
-
-.dndflow aside {
-  border-left: 1px solid #eaeeee;
-  padding: 15px 10px;
-  font-size: 12px;
-  background: #ffffff;
-  min-width: 20vw;
-  flex-grow: 1;
-  position: relative;
-}
-
-.dndflow .reactflow-wrapper {
-  flex-grow: 1;
-  height: calc(100vh - 3rem);
-}
-
-.text-node {
-  /* border: 1.7px solid #fff; */
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 8px;
-
-  border-radius: 5px;
-  /* display: flex; */
-  justify-content: space-between;
-  gap: 10px;
-  background-color: #fff;
-  width: 13rem;
-}
-
-.text-node-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: #a1f8ec;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-  padding: 0.6px 9px;
-  font-weight: 600;
-}
-
-.text-node-header span {
-  margin-left: 4px;
-  font-size: 11px;
-}
-.text-node-header:first-child svg {
-  margin-top: 5px;
-}
-
-.text-node-body {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 2.6rem;
-  border-radius: 5px;
-  padding: 1px 9px;
-  overflow: auto;
-  font-size: 14px;
-}
-/* .text-node:active {
-  border: 2px solid green;
-} */
-
-.edgebutton {
-  width: 14px;
-  height: 14px;
-  background: #eee;
-  border: 1px solid #fff;
+  justify-content: center;
+  border-radius: 4px;
   cursor: pointer;
-  border-radius: 100%;
-  font-size: 8px;
-  line-height: 1;
-  text-align: left;
-  padding-left: 4px;
-  margin-left: 5px;
+}
+.mergeCell svg {
+  /* margin-top: 15%; */
+  /* background-color: antiquewhite; */
+}
+.mergeCell:hover {
+  background-color: #d3e3fd;
+  border: 0.5px solid #97b7eb;
 }
 
-.edgebutton:hover {
-  box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.08);
+.disabled {
+  /* background-color: black; */
+  pointer-events: none;
+  cursor: row-resize;
 }
 
-.settings-panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #ffffff;
-  border-left: 0.5px solid eaeeee;
-}
-.settings-panel-header {
-  padding: 10px;
-  border-bottom: 0.5px solid #cbcdcd;
-  display: flex;
-  align-items: center;
-  gap: 37%;
+.mergeCell .active {
+  background-color: #d3e3fd;
+  border: 0.5px solid #97b7eb;
 }
 
-.message-cont {
-  padding: 10px;
-  border-bottom: 0.5px solid #eaeeee;
-}
-
-.message-cont h2 {
-  color: rgb(162, 162, 162);
-  margin-bottom: 4px;
-}
-
-.message-input {
-  width: 95% !important;
-  height: 80px !important;
-
-  border-radius: 7px;
-  padding: 8px;
-}
-
-.react-flow__node.selected:focus {
-  outline: 1.6px solid rgb(66, 66, 233);
-}
-
-.react-flow__node {
-  border-radius: 8px;
+.mergeCell .not_active {
+  background-color: transparent;
+  border: 0 solid #97b7eb00;
 }
