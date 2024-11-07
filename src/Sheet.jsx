@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   checkFormulaExpr,
   checkRefErrInFormula,
@@ -11,15 +11,15 @@ import {
   sheetColumns,
   sheetRows,
   sheetUtils,
+  computeStartEndPos,
 } from "./utils/Sheet";
-import { computeStartEndPos } from "./utils/DrawCanvas";
 import { column, evaluate } from "mathjs";
 import _ from "lodash";
 
 const sheetData = [];
-for (let row = 0; row < 500; row++) {
+for (let row = 0; row < 300; row++) {
   const rowData = [];
-  for (let col = 0; col < 30; col++) {
+  for (let col = 0; col < 50; col++) {
     const cellInfo = {
       id: `${row}-${col}`,
       value: `${col}`,
@@ -37,7 +37,6 @@ for (let row = 0; row < 500; row++) {
 
 export default function Sheet({
   excludeHeight,
-  updateCell,
   setAddressBar,
   handleInputChange,
   sharedValue,
@@ -45,7 +44,6 @@ export default function Sheet({
   formulaEditState,
   setFormulaEditState,
   mergeSte,
-  setMergeSte,
 }) {
   const canvasRef = useRef(null);
   const scrollX = useRef(0);
@@ -392,9 +390,10 @@ export default function Sheet({
     const x = e.clientX;
     const y = e.clientY - excludeHeight;
     const threshold = 16;
+    console.log(y, window.innerHeight - threshold);
     if (
       x >= window.innerWidth - threshold ||
-      y >= window.innerHeight - threshold
+      e.clientY >= window.innerHeight - threshold
     )
       return;
 
@@ -520,26 +519,7 @@ export default function Sheet({
 
     // setEditCell({ x: cell.x, y: cell.y });
     setIsEditable(true);
-    // document.getElementById("editable").textContent = "fsdfsf";
   }
-
-  // useEffect(() => {
-  //   if (debounceTimeout.current) {
-  //     clearTimeout(debounceTimeout.current);
-  //   }
-
-  //   // Set a new timeout to debounce the state update
-  //   debounceTimeout.current = setTimeout(() => {
-  //     console.log("newcontent", content);
-  //     updateCell({
-  //       value: content,
-  //       id: `${selection.y1}-${selection.x1}`,
-  //       formula: "",
-  //     }); // Update the content state after the delay
-  //   }, 300);
-
-  //   // drawCanvas();
-  // }, [content]);
 
   const getMissingCells = useCallback((oldExpression, newExpression) => {
     const newExpressionSet = new Set(newExpression);
@@ -683,10 +663,10 @@ export default function Sheet({
           updatedCell.formulaErr = false;
         }
         /* 
-A1: new Set(B1)
-B1: new Set(A1)
-C1: new Set(B1)
-*/
+        A1: new Set(B1)
+        B1: new Set(A1)
+        C1: new Set(B1)
+        */
         // Update dependencies
         const newDependencies = new Set(formula.match(cellRegex) || []);
         // updatedCell.dependencies = newDependencies;
@@ -698,24 +678,12 @@ C1: new Set(B1)
         });
 
         // Remove this cell from old dependencies that are no longer used
-        // oldDependencies.forEach((dep) => {
-        //   if (!newDependencies.has(dep)) {
-        //     const [depRow, depCol] = dep.split("-").map(Number);
-        //     newSheetData[depRow][depCol].dependencies.delete(`${row}-${col}`);
-        //   }
-        // });
-        console.log("newDependency", newDependencies, formula.match(cellRegex));
       } else {
         updatedCell.formula = "";
         updatedCell.value = inputValue;
         // updatedCell.dependencies.clear();
 
         // Remove this cell from all old dependencies
-        // oldDependencies.forEach((dep) => {
-        //   const [depRow, depCol] = dep.split("-").map(Number);
-        //   newSheetData[depRow][depCol].dependencies.delete(`${row}-${col}`);
-        // });
-        // console.log(typeof inputValue);
       }
 
       if (!updatedCell.refError && updatedCell.dependencies.size > 0) {
@@ -736,19 +704,8 @@ C1: new Set(B1)
         });
       }
       // Only update the specific cell
-      // const updatedCell = {
-      //   ...updatedRow[col],
-      //   value: newValue,
-      //   formula: newFormula,
-      // };
-      console.log("updateCell", updatedCell);
-      // Update dependent cells
-      // const updatedCells = updateDependentCells(newSheetData, `${row}-${col}`);
-      // Replace the old row and cell with the updated one
-      // updatedRow[col] = updatedCell;
-      // newSheetData[row] = updatedRow;
+
       newSheetData[row][col] = updatedCell;
-      // console.log(newSheetData);
       return newSheetData; // Return the new sheetDB
     });
   }, []);
@@ -792,71 +749,11 @@ C1: new Set(B1)
         continue;
       }
 
-      const depCell = sheetData[depRow][depCol];
-      console.log("Dependent cell:", depCell);
-
-      // ... rest of the function remains the same
+      // const depCell = sheetData[depRow][depCol];
     }
 
     return updatedCells;
   }, []);
-
-  // const updateCellValue = useCallback((row, col, inputValue) => {
-  //   setSheetStore((prevSheetData) => {
-  //     const newSheetData = prevSheetData.map((r) => r.map((c) => ({ ...c })));
-  //     const updatedCell = newSheetData[row][col];
-  //     const oldDependencies = new Set(updatedCell.dependencies);
-
-  //     if (inputValue.startsWith("=")) {
-  //       const formula = inputValue.substring(1);
-  //       updatedCell.formula = formula;
-  //       updatedCell.value = evaluateFormula(formula);
-
-  //       // Update dependencies
-  //       const cellRegex = /([A-Z]+)(\d+)/g;
-  //       const newDependencies = new Set(formula.match(cellRegex) || []);
-  //       updatedCell.dependencies = newDependencies;
-
-  //       newDependencies.forEach((dep) => {
-  //         const [, colLetter, rowNum] = dep.match(/([A-Z]+)(\d+)/);
-  //         const colIndex =
-  //           colLetter
-  //             .split("")
-  //             .reduce((acc, char) => acc * 26 + char.charCodeAt(0) - 64, 0) - 1;
-  //         const rowIndex = parseInt(rowNum, 10) - 1;
-  //         newSheetData[rowIndex][colIndex].dependencies.add(`${row}-${col}`);
-  //       });
-
-  //       // Remove this cell from old dependencies that are no longer used
-  //       oldDependencies.forEach((dep) => {
-  //         if (!newDependencies.has(dep)) {
-  //           const [depRow, depCol] = dep.split("-").map(Number);
-  //           newSheetData[depRow][depCol].dependencies.delete(`${row}-${col}`);
-  //         }
-  //       });
-  //     } else {
-  //       updatedCell.formula = "";
-  //       updatedCell.value = inputValue;
-  //       updatedCell.dependencies.clear();
-
-  //       // Remove this cell from all old dependencies
-  //       oldDependencies.forEach((dep) => {
-  //         const [depRow, depCol] = dep.split("-").map(Number);
-  //         newSheetData[depRow][depCol].dependencies.delete(`${row}-${col}`);
-  //       });
-  //     }
-
-  //     // Update dependent cells
-  //     // const updatedCells = updateDependentCells(newSheetData, `${row}-${col}`);
-
-  //     // // Only update cells that have changed
-  //     // return newSheetData.map((row, rowIndex) =>
-  //     //   row.map((cell, colIndex) =>
-  //     //     updatedCells.has(`${rowIndex}-${colIndex}`) ? { ...cell } : cell
-  //     //   )
-  //     // );
-  //   });
-  // }, []);
 
   useEffect(() => {
     // window.addEventListener("keydown", handleGlobalKeyDown);
@@ -910,25 +807,16 @@ C1: new Set(B1)
       width,
       height,
     });
-    // console.log(
-    //   sheetStore[selection.y1][selection.x1].value,
-    //   selection.y1,
-    //   selection.x1
-    // );
     // setSharedValue(sheetStore[selection.y1][selection.x1].value);
     fillCellContentOnSelection(selection.x1, selection.y1);
     activeCellRef.current.edited = false;
     activeCellRef.current.value = "";
     activeCellRef.current.formula = "";
     return () => {
-      // window.removeEventListener("keydown", handleGlobalKeyDown);
-      // const value = sheetStore[selection.y1][selection.x1].value;
-      // const formula = sheetStore[selection.y1][selection.x1].formula;
       const value = activeCellRef.current.value;
       const formula = activeCellRef.current.formula;
       const isEdit = activeCellRef.current.edited;
       if (!isEdit) return;
-      console.log(selection, "cell:", activeCellRef.current);
       if (formula) {
         const content = formula.slice(1);
         const result = evaluateFormula(content, [...sheetStore]);
@@ -950,14 +838,6 @@ C1: new Set(B1)
 
       return result;
     } else {
-      // const [rowNumbers, columnNumbers] = decodeRowColumn(matches);
-      // const exprVariables = {};
-      // let i = 0;
-      // matches.forEach((item) => {
-      //   // console.log(sheetStore[rowNumbers[i]][columnNumbers[i]]);
-      //   exprVariables[item] = sheetStore[rowNumbers[i]][columnNumbers[i]].value;
-      //   i += 1;
-      // });
       const result = resolveExpression(content, matches, newSheetData);
 
       return result;
@@ -994,7 +874,6 @@ C1: new Set(B1)
     const exprVariables = {};
     let i = 0;
     matches.forEach((item) => {
-      // console.log(sheetStore[rowNumbers[i]][columnNumbers[i]]);
       if (depRow === rowNumbers[i] && depCol === columnNumbers[i]) {
         exprVariables[item] = value;
       } else {
@@ -1003,21 +882,13 @@ C1: new Set(B1)
       }
       i += 1;
     });
-    console.log("eprevariables=", exprVariables, rowNumbers, columnNumbers);
     for (let variable in exprVariables) {
       expr = expr.replace(new RegExp(variable, "g"), exprVariables[variable]);
     }
-
-    // console.log(expr);
-
-    // Evaluate the final expression (after replacing variables)
-    return evaluate(expr); // Using eval to evaluate the expression
+    return evaluate(expr); //
   }
 
   const handleGlobalKeyDown = (e) => {
-    // if (e.key === "Enter") {
-    //   setIsEditing((prevState) => !prevState);
-    // }
     if (e.key === "Enter") {
       // if (!isEditable) setIsEditable(true);
       // else setIsEditable(false);
@@ -1028,20 +899,8 @@ C1: new Set(B1)
       //   });
       //   drawCanvas();
       // }
-      console.log(isEditable);
-      // console.log(
-      //   sheetStore[selection.y1][selection.x1].value,
-      //   selection.y1,
-      //   selection.x1
-      // );
+
       setIsEditable((v) => !v);
-      // setIsEditable(true);
-
-      // if (isEditable)
-      //   setSharedValue(
-      //     sheetStore[selection.y1 + 1][selection.x1].value
-      //   );
-
       return;
     }
     // if (e.key === "Enter" && isEditable) {
@@ -1069,14 +928,6 @@ C1: new Set(B1)
   function handleInputKeyDown(e) {
     if (e.key === "Enter" && isEditable) {
       e.preventDefault();
-      // setIsEditable(false);
-      // const content = sheetStore[selection.y1][selection.x1].value;
-      // const isExpression = content[0] === "=";
-      // if (isExpression) {
-      //   sheetStore[selection.y1][selection.x1].formula = content;
-      //   evaluateContent(content);
-      // }
-      // const result = evaluate(content);
       console.log(isEditable, sharedValue, content);
       setSelection((prev) => {
         return { ...prev, y1: prev.y1 + 1, y2: prev.y2 + 1 };
@@ -1098,10 +949,8 @@ C1: new Set(B1)
   }
 
   useEffect(() => {
-    console.log(isEditable);
     if (isEditable && contentEditableRef.current) {
-      contentEditableRef.current.focus(); // Auto-focus the contentEditable div
-      // moveCursorToEnd(); // Move cursor to the end
+      contentEditableRef.current.focus();
     }
     if (isEditable) console.log(sharedValue);
   }, [isEditable]);
@@ -1120,38 +969,24 @@ C1: new Set(B1)
   };
 
   function handleInput(e) {
-    // console.log("handleInput", e, isEditable);
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
     const newContent = e.target.innerText;
     debounceTimeout.current = setTimeout(() => {
-      //moveCursorToEnd(); // Update the content state after the delay
+      //moveCursorToEnd();
     }, 300);
 
-    // sheetStore[selection.y1][selection.x1].value = newContent;
-    // setSharedValue(newContent);
-    console.log(sheetStore[selection.y1][selection.x1].value);
     // handleInputChange(e);
     const isExpression = newContent[0] === "=";
     if (isExpression) {
       activeCellRef.current.formula = newContent;
       activeCellRef.current.edited = true;
-      evaluateContent(newContent);
+      // evaluateContent(newContent);
     } else {
       activeCellRef.current.value = newContent;
       activeCellRef.current.edited = true;
     }
-    // updateCellValue(selection.y1, selection.x1, newContent, formula);
-
-    // setSharedValue(newContent);
-    //moveCursorToEnd(); // Update the content state after the delay
-
-    // evaluateContent(newContent);
-
-    // const newContent = e.target.value;
-    // console.log(newContent);
-    // setContent(newContent);
   }
 
   function getCellData() {
@@ -1177,9 +1012,16 @@ C1: new Set(B1)
     context.fillRect(0, 0, rowHeaderWidth, context.canvas.height);
     context.fillStyle = HEADER_COLOR;
     context.fillRect(0, 0, colHeaderHeight, context.canvas.width);
+    const { minX, minY, maxX, maxY, singleCellSelectX, singleCellSelectY } =
+      getOverlayDimensions();
+    if (selection.x1 !== selection.x2 || selection.y1 !== selection.y2) {
+      const width = maxX - minX;
+      const height = maxY - minY;
+      context.fillStyle = SELECTION_COLOR;
+      context.fillRect(minX, minY, width, height);
+    }
 
     //rows
-    //  let y = colHeaderHeight;
     context.strokeStyle = GRID_LINE_COLOR;
     context.fillStyle = HEADER_COLOR;
     // context.fillRect(0, colHeaderHeight, rowHeaderWidth, canvasHeight);
@@ -1200,43 +1042,12 @@ C1: new Set(B1)
       context.moveTo(rowHeaderWidth, row.point1); // x, y
       context.lineTo(context.canvas.width, row.point1); // x, y
       context.stroke();
-
-      //draw row header
-      // context.beginPath();
-      // context.moveTo(0, row.point1); // x, y
-      // context.lineTo(rowHeaderWidth, row.point1); // x, y
-      // context.stroke();
-
-      //  y += CELL_HEIGHT;
     }
     //columns
-    //  let x = rowHeaderWidth;
-
-    //
     context.beginPath();
     context.moveTo(rowHeaderWidth, 0); // x, y
     context.lineTo(rowHeaderWidth, context.canvas.height); // x, y
     context.stroke();
-
-    //
-    // const updatedCols = updateColumnsCord([...sheet.colCells]);
-    // for (const col of visibleCols) {
-    //   if (col.point2 >= rowHeaderWidth) {
-    //     context.beginPath();
-    //     context.moveTo(col.point2, colHeaderHeight); // x, y
-    //     context.lineTo(col.point2, context.canvas.height); // x, y
-    //     context.stroke();
-    //     // draw column header
-    //     context.beginPath();
-    //     context.moveTo(col.point2, 0); // x, y
-    //     context.lineTo(col.point2, colHeaderHeight); // x, y
-    //     context.stroke();
-    //   }
-    //   x += CELL_WIDTH;
-    // }
-    // const totalCols = [...updateColumnsCord([...sheet.colCells])];
-    // const totalCols = updateColumnsCord([...totalColumns.current], scrollX);
-    // updateColumnsCord();
     const [columnStart, columnEnd] = computeStartEndPos(
       // totalCols
       totalColumns.current,
@@ -1254,20 +1065,11 @@ C1: new Set(B1)
         context.moveTo(col.point2, colHeaderHeight); // x, y
         context.lineTo(col.point2, context.canvas.height); // x, y
         context.stroke();
-        // draw column header
-        // context.beginPath();
-        // context.moveTo(col.point2, 0); // x, y
-        // context.lineTo(col.point2, colHeaderHeight); // x, y
-        // context.stroke();
       }
-
-      //  x += CELL_WIDTH;
     }
 
     //Selecting cells
 
-    const { minX, minY, maxX, maxY, singleCellSelectX, singleCellSelectY } =
-      getOverlayDimensions();
     if (singleCellSelectX && singleCellSelectY) {
       // const width = singleCellSelectX.width;
       // const height = singleCellSelectY.height;
@@ -1313,14 +1115,12 @@ C1: new Set(B1)
     context.arc(maxX, maxY, 3, 0, Math.PI * 2, false); // Draw a point using the arc function of the canvas with a point structure.
     context.fill();
     context.stroke();
-    // Fill column header
-    //  x = rowHeaderWidth;
 
+    // Fill column header
     context.fillStyle = HEADER_COLOR;
     context.fillRect(0, 0, context.canvas.width, colHeaderHeight);
 
     context.strokeStyle = GRID_LINE_COLOR;
-    // context.fillStyle = HEADER_COLOR;
     context.fillRect(0, colHeaderHeight, rowHeaderWidth, canvasHeight);
 
     context.textBaseline = "middle";
@@ -1339,14 +1139,11 @@ C1: new Set(B1)
           0.5;
       const centerY = colHeaderHeight * 0.5;
 
-      // const col = totalCols[i].id;
       const content = col.content;
       context.fillText(content, centerX, centerY);
-      //  x += CELL_WIDTH;
     }
 
     // Fill row header
-    //  y = colHeaderHeight;
     // context.strokeStyle = GRID_LINE_COLOR;
     // context.fillStyle = HEADER_COLOR;
     // context.fillRect(0, colHeaderHeight, rowHeaderWidth, canvasHeight);
@@ -1357,12 +1154,10 @@ C1: new Set(B1)
       const centerY =
         rows[i].point1 + Math.abs(rows[i].point1 - rows[i].point2) * 0.5;
       const centerX = rowHeaderWidth * 0.5;
-      // const centerX = visibleRows[i].width * 0.5;
 
       const row = rows[i].id;
       const content = row + 1;
       context.fillText(content, centerX, centerY);
-      //  y += CELL_HEIGHT;
     }
 
     //draw row header
@@ -1370,12 +1165,9 @@ C1: new Set(B1)
       const row = rows[i];
       if (row.point1 > canvasHeight) break;
       context.beginPath();
-      // context.strokeStyle = "black";
       context.moveTo(0, row.point1); // x, y
       context.lineTo(rowHeaderWidth, row.point1); // x, y
       context.stroke();
-
-      //  y += CELL_HEIGHT;
     }
 
     // draw column header
@@ -1439,8 +1231,6 @@ C1: new Set(B1)
     context.textAlign = "left";
     context.fillStyle = "black";
     context.font = "12px sans-serif";
-    const offsetY = totalColumns.current[columnStartRef.current];
-    const offsetX = totalRows.current[rowStartRef.current];
     for (let i = rowStartRef.current; i < totalRows.current.length; i++) {
       const row = totalRows.current[i];
       if (row.point2 > canvasHeight) break;
@@ -1453,38 +1243,12 @@ C1: new Set(B1)
         if (col.point1 > canvasWidth) break;
         const x = col.point1 + 5;
         const y = row.point1 + row.height * 0.5 + 1;
-        const p1 = row.point1;
-        const p2 = col.point1;
-        const w = row.point2 - row.point1;
-        const h = col.point2 - col.point1;
-        // context.rect(p1, p2, w, h);
-        // context.clip();
         let content = "";
         if (sheetStore[i][j].refError) {
           content = "REF!!";
         } else {
           content = sheetStore[i][j].value;
         }
-
-        let newContent = "";
-        // if (context.measureText(content).width > w) {
-        //   // Add ellipsis if the text exceeds the cell width
-        //   while (context.measureText(content).width > w) {
-        //     content = content.slice(0, -1); // Remove last character until it fits
-        //   }
-        //   // conten; // Append ellipsis to truncated text
-        // }
-
-        // if (col.point1 > offsetY. || row.point1 > offsetX) {
-        //   context.fillText(content, x, y);
-        // console.log(
-        //   "sffsfasf",
-        //   row,
-        //   col,
-        //   rowStartRef.current,
-        //   columnStartRef.current
-        // );
-        // }
         context.fillText(content, x, y);
       }
     }
@@ -1526,22 +1290,6 @@ C1: new Set(B1)
       height,
     };
   }
-  // `calc(100vh-${excludeHeight})`
-
-  // getColumnsElements() {
-  //   const cols = []
-  //   for (let i = columnStartRef.current; i < totalColumns.current.length; i++) {
-  //     const col = totalColumns.current[i];
-  //     const newCol = {
-  //       id: col.id,
-  //       width: col.width
-  //     }
-  //     if (col.point1 < rowHeaderWidth) {
-  //       newCol.width
-  //     }
-  //     //  x += CELL_WIDTH;
-  //   }
-  // }
   return (
     <div
       style={{
@@ -1581,15 +1329,20 @@ C1: new Set(B1)
           }}
         ></div> */}
         <div
-          style={{ position: "absolute", width: "5000px", height: "1px" }}
+          style={{
+            position: "absolute",
+            width: totalColumns.current[totalColumns.current.length - 1].point2,
+            height: "1px",
+          }}
         ></div>
         <div
-          style={{ position: "absolute", width: "5000px", height: "1px" }}
+          style={{
+            position: "absolute",
+            width: "1px",
+            height: totalRows.current[totalRows.current.length - 1].point2,
+          }}
         ></div>
-        <div
-          style={{ position: "absolute", width: "1px", height: "5000px" }}
-        ></div>
-        {(selection.x1 !== selection.x2 || selection.y1 !== selection.y2) && (
+        {/* {(selection.x1 !== selection.x2 || selection.y1 !== selection.y2) && (
           <div
             id="overlay"
             style={{
@@ -1601,10 +1354,8 @@ C1: new Set(B1)
               width: getOverlayDimensions().width,
               height: getOverlayDimensions().height,
             }}
-            // onMouseMove={onMouseMove}
-            // onMouseUp={() => setSelectionInProgress(false)}
           ></div>
-        )}
+        )} */}
       </div>
       {(isEditable || formulaEditState) && (
         <div
@@ -1624,7 +1375,7 @@ C1: new Set(B1)
           ref={contentEditableRef} // Attach the ref to the contentEditable div
           onInput={handleInput}
           onFocus={moveCursorToEnd}
-          onKeyDown={handleInputKeyDown}
+          // onKeyUp={handleInputKeyDown}
           onBlur={handleBlur}
           id="editable"
           contentEditable={true}

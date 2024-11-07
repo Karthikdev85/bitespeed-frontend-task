@@ -116,7 +116,7 @@ export function getEncodedCharacter(num) {
 }
 
 export function sheetColumns(rowHeaderWidth) {
-  const cols = 30;
+  const cols = 50;
   const width = 100;
   const colCells = [];
 
@@ -133,12 +133,11 @@ export function sheetColumns(rowHeaderWidth) {
     colCells.push(cell);
     rowHeaderWidth += width;
   }
-  console.log("render colsslsls", colCells);
   return colCells;
 }
 
 export function sheetRows(colHeaderHeight) {
-  const rows = 500;
+  const rows = 300;
   const height = 24;
   const rowCells = [];
 
@@ -173,15 +172,15 @@ export const checkFormulaExpr = (formula, sheetData) => {
     return { valid: false, error: 'Formula must start with "=".' };
   }
 
-  // 2. Remove the leading '='
+  // Remove the leading '='
   const expression = formula.substring(1).trim();
 
-  // 3. Define allowed operators and patterns
+  // Define allowed operators and patterns
   const operatorPattern = /[+\-*/()]/;
   const cellRefPattern = /^[A-Z]+[0-9]+$/;
   const numberPattern = /^\d+(\.\d+)?$/;
 
-  // 4. Tokenize the expression
+  // Tokenize the expression
   // This regex matches cell references, numbers, and operators
   const tokenRegex = /([A-Z]+[0-9]+|\d+(\.\d+)?|[+\-*/()])/g;
   const tokens = expression.match(tokenRegex);
@@ -190,7 +189,7 @@ export const checkFormulaExpr = (formula, sheetData) => {
     return { valid: false, error: "Invalid formula syntax." };
   }
 
-  // 5. Validate each token
+  // Validate each token
   for (let token of tokens) {
     if (operatorPattern.test(token)) {
       // Token is a valid operator
@@ -223,7 +222,7 @@ export const checkFormulaExpr = (formula, sheetData) => {
     }
   }
 
-  // 6. Check for balanced parentheses
+  // Check for balanced parentheses
   let balance = 0;
   for (let char of expression) {
     if (char === "(") balance++;
@@ -235,8 +234,6 @@ export const checkFormulaExpr = (formula, sheetData) => {
   if (balance !== 0) {
     return { valid: false, error: "Unbalanced parentheses in formula." };
   }
-
-  // 7. Additional syntax checks can be added here (e.g., proper operator placement)
 
   return { valid: true };
 };
@@ -310,3 +307,29 @@ export const checkRefErrInFormula = (formula, sheetData) => {
   });
   return false;
 };
+
+export function computeStartEndPos(list, offset, size) {
+  let startPos;
+  let endPos;
+
+  for (let i = 0; i < list.length; i++) {
+    const tab = list[i];
+    if (!startPos && tab.point2 > offset) {
+      startPos = tab;
+    }
+    if (!endPos && tab.point2 > size) {
+      endPos = tab;
+      break;
+    }
+  }
+  return [startPos, endPos];
+}
+
+// export function updateColumnsCord(totalCols, scrollX) {
+//   const updatedCols = totalCols.map((col) => ({
+//     ...col,
+//     point1: col.point1 - scrollX.current,
+//     point2: col.point2 - scrollX.current,
+//   }));
+//   return updatedCols;
+// }
