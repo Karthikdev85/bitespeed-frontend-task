@@ -22,7 +22,7 @@ for (let row = 0; row < 300; row++) {
   for (let col = 0; col < 50; col++) {
     const cellInfo = {
       id: `${row}-${col}`,
-      value: `${col}`,
+      value: `${row + col + 50 * row + 1}`,
       formula: "",
       dependencies: new Set(),
       isMerged: false, // For merge functionality

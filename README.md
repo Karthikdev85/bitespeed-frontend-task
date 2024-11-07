@@ -2,7 +2,7 @@
 - A minimalist spreadsheet created with React and the HTML Canvas API to manage large rows and columns like Google Sheets.
 - Developed a formula calculation feature and implemented tracking for circular dependencies between cells.
 ![alt text](<Screenshot 2024-11-07 111012.png>)
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
 
 Currently, two official plugins are available:
 
